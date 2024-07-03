@@ -1,0 +1,40 @@
+wget https://downloads.apache.org/kafka/3.7.0/kafka_2.13-3.7.0.tgz
+tar -xvf kafka_2.13-3.7.0.tgz
+
+
+-----------------------
+install java
+sudo yum install java-1.8.0
+
+
+cd kafka_2.12-3.3.1
+Open 4 session of ec2
+
+Start Zoo-keeper:
+-------------------------------
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+
+Start Kafka-server:
+----------------------------------------
+export KAFKA_HEAP_OPTS="-Xmx256M -Xms128M"
+
+bin/kafka-server-start.sh config/server.properties
+
+It is pointing to private server , change server.properties so that it can run in public IP 
+
+change
+Do a "sudo nano config/server.properties" - change ADVERTISED_LISTENERS to public ip of the EC2 instance
+
+
+Create the topic:
+-----------------------------
+bin/kafka-topics.sh --create --topic stockkafka --bootstrap-server {Public IP of EC2 Instance:9092} --replication-factor 1 --partitions 1
+
+Start Producer:
+--------------------------
+bin/kafka-console-producer.sh --topic stockkafka --bootstrap-server {Public IP of EC2 Instance:9092} 
+
+Start Consumer:
+-------------------------
+bin/kafka-console-consumer.sh --topic stockkafka --bootstrap-server {Public IP of EC2 Instance:9092}
